@@ -1,0 +1,914 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "a full stack Ecommerce app",
+    "version": "1.0.0",
+    "title": "Ecommerce",
+    "contact": {
+      "email": "allenyin@cmail.carleton.ca"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "users",
+      "description": "user operations"
+    },
+    {
+      "name": "products",
+      "description": "products data"
+    },
+    {
+      "name": "departments",
+      "description": "departments list"
+    },
+    {
+      "name": "categories",
+      "description": "categories list"
+    }
+  ],
+  "schemes": ["http", "https"],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": ["users"],
+        "summary": "login authentication",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "verifyUser",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/verifyUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "user token created",
+            "schema": {
+              "$ref": "#/definitions/userToken"
+            }
+          },
+          "400": {
+            "description": "missing field",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 400.0
+                },
+                "type": {
+                  "type": "string",
+                  "example": "missing_field"
+                },
+                "error": {
+                  "$ref": "#/definitions/inline_response_400_error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Incorrect username or password",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 403.0
+                },
+                "type": {
+                  "type": "string",
+                  "example": "invalid_field"
+                },
+                "error": {
+                  "$ref": "#/definitions/inline_response_403_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/signin": {
+      "post": {
+        "tags": ["users"],
+        "summary": "create user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "createUser",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/createUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "user created",
+            "schema": {
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "user created"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "schema": {
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 400.0
+                },
+                "type": {
+                  "type": "string",
+                  "example": "missing_field"
+                },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "param": {
+                            "type": "string",
+                            "example": "username"
+                          },
+                          "msg": {
+                            "type": "string",
+                            "example": "username is required"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "existed user",
+            "schema": {
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "example": 409.0
+                },
+                "type": {
+                  "type": "string",
+                  "example": "invalid_field"
+                },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user is existed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/departments": {
+      "get": {
+        "tags": ["departments"],
+        "summary": "get all departments",
+        "parameters": [
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get all departments success",
+            "schema": {
+              "properties": {
+                "departments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "5cb7cd503f467927c8313c3c"
+                      },
+                      "departmentName": {
+                        "type": "string",
+                        "example": "Women"
+                      },
+                      "categories": {
+                        "type": "string",
+                        "example": "Basics,Blazer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "500": {
+            "description": "get all departments fail"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["categories"],
+        "summary": "get all categories",
+        "parameters": [
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get all categories success",
+            "schema": {
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "5cb7cd503f467927c8313c38"
+                      },
+                      "categoryName": {
+                        "type": "string",
+                        "example": "Blazer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "500": {
+            "description": "get all categories fail"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": ["products"],
+        "summary": "get all products",
+        "parameters": [
+          {
+            "name": "department",
+            "in": "query",
+            "description": "the department Men and Women...",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "the category Jeans,Sweater,etc...",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "price, -price...",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "description": "price range '20-30'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get all products success",
+            "schema": {
+              "$ref": "#/definitions/products"
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "404": {
+            "description": "get all products fail"
+          }
+        }
+      }
+    },
+    "/products/{productID}": {
+      "get": {
+        "tags": ["products"],
+        "summary": "get one product data",
+        "parameters": [
+          {
+            "name": "productID",
+            "in": "path",
+            "description": "The product ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "find product success",
+            "schema": {
+              "$ref": "#/definitions/product"
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      }
+    },
+    "/users/{userId}/cart": {
+      "get": {
+        "tags": ["users"],
+        "summary": "get cart info",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "find cart success",
+            "schema": {
+              "$ref": "#/definitions/cartObj"
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "404": {
+            "description": "find cart fail"
+          }
+        }
+      },
+      "post": {
+        "tags": ["users"],
+        "summary": "create cart",
+        "description": "initialize when user add first product to cart",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "requestCart",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/requestCartObj"
+            }
+          },
+          {
+            "name": "user_token",
+            "in": "header",
+            "description": "authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "create cart success",
+            "schema": {
+              "$ref": "#/definitions/cartObj"
+            }
+          },
+          "400": {
+            "description": "create cart fail"
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": ["search"],
+        "summary": "query products by title or category",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "the query Ripped Jeans, Jeans,etc...",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "price, -price",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "description": "price range '20-30'",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "find products success",
+            "schema": {
+              "$ref": "#/definitions/products"
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      }
+    },
+    "/filter": {
+      "get": {
+        "tags": ["filter"],
+        "summary": "autocomplete input any string return suggestions object",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "find products success",
+            "schema": {
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "department": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "Men"
+                      }
+                    },
+                    "category": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "Jeans"
+                      }
+                    },
+                    "title": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "Perl Knit Swear"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "authentication fail",
+            "schema": {
+              "$ref": "#/definitions/invalid_token"
+            }
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "userToken": {
+      "type": "object",
+      "properties": {
+        "user_token": {
+          "$ref": "#/definitions/userToken_user_token"
+        }
+      }
+    },
+    "userObj": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "5c9d2e70bbb680869617ea63"
+        },
+        "username": {
+          "type": "string",
+          "example": "admin@admin.com"
+        },
+        "fullname": {
+          "type": "string",
+          "example": "Cuneyt Celebican"
+        },
+        "admin": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "invalid_token": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 401.0
+        },
+        "type": {
+          "type": "string",
+          "example": "invalid_field"
+        },
+        "error": {
+          "$ref": "#/definitions/invalid_token_error"
+        }
+      }
+    },
+    "requestCartObj": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "example": "5caf90b95d51a668344ba1e1"
+        },
+        "productId": {
+          "type": "string",
+          "example": "5bedf5eec14d7822b39d9d4e"
+        },
+        "increase": {
+          "type": "boolean",
+          "example": false
+        },
+        "decrease": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "cartObj": {
+      "type": "object",
+      "properties": {
+        "cart": {
+          "$ref": "#/definitions/cartObj_cart"
+        }
+      }
+    },
+    "createUser": {
+      "type": "object",
+      "required": ["email", "password", "verifyPassword"],
+      "properties": {
+        "fullname": {
+          "type": "string",
+          "example": "bob"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "bob@bob.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "Ab123123"
+        },
+        "verifyPassword": {
+          "type": "string",
+          "example": "Ab123123"
+        }
+      }
+    },
+    "readUser": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "bob"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "bob@bob.com"
+        }
+      }
+    },
+    "verifyUser": {
+      "type": "object",
+      "properties": {
+        "credential": {
+          "$ref": "#/definitions/verifyUser_credential"
+        }
+      }
+    },
+    "productObj": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "5bedf5eec14d7822b39d9d4e"
+        },
+        "imagePath": {
+          "type": "string",
+          "example": "/uploads/1775300615_1_1_1.jpg"
+        },
+        "title": {
+          "type": "string",
+          "example": "Perl Knit Swear"
+        },
+        "description": {
+          "type": "string",
+          "example": "Purl-stitch knit sweater in a combination of textures. Ribbed trim."
+        },
+        "price": {
+          "type": "number",
+          "example": 79.99
+        },
+        "color": {
+          "type": "string",
+          "example": "Orange"
+        },
+        "size": {
+          "type": "string",
+          "example": "M,L"
+        },
+        "quantity": {
+          "type": "number",
+          "example": 5.0
+        },
+        "department": {
+          "type": "string",
+          "example": "Men"
+        },
+        "category": {
+          "type": "string",
+          "example": "Knitwear"
+        }
+      }
+    },
+    "product": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/productObj"
+        }
+      }
+    },
+    "products": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/productObj"
+          }
+        }
+      }
+    },
+    "authHeader": {
+      "properties": {
+        "user_token": {
+          "$ref": "#/definitions/authHeader_user_token"
+        }
+      }
+    },
+    "inline_response_400_error": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "missing username or password"
+        }
+      }
+    },
+    "inline_response_400": {
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 400.0
+        },
+        "type": {
+          "type": "string",
+          "example": "missing_field"
+        },
+        "error": {
+          "$ref": "#/definitions/inline_response_400_error"
+        }
+      }
+    },
+    "inline_response_403_error": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Incorrect username or password"
+        }
+      }
+    },
+    "inline_response_403": {
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 403.0
+        },
+        "type": {
+          "type": "string",
+          "example": "invalid_field"
+        },
+        "error": {
+          "$ref": "#/definitions/inline_response_403_error"
+        }
+      }
+    },
+    "userToken_user_token": {
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "5c9d2e70bbb680869617ea63"
+        },
+        "user_name": {
+          "type": "string",
+          "example": "bob"
+        },
+        "token": {
+          "type": "string",
+          "example": "Due6daUTre"
+        },
+        "expire_in": {
+          "type": "number",
+          "example": 2592000.0
+        }
+      }
+    },
+    "invalid_token_error": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Token is not valid"
+        }
+      }
+    },
+    "cartObj_cart_items_5bedf5eec14d7822b39d9d4e": {
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/productObj"
+        },
+        "qty": {
+          "type": "number"
+        },
+        "price": {
+          "type": "number",
+          "example": 79.99
+        }
+      }
+    },
+    "cartObj_cart_items": {
+      "properties": {
+        "5bedf5eec14d7822b39d9d4e": {
+          "$ref": "#/definitions/cartObj_cart_items_5bedf5eec14d7822b39d9d4e"
+        }
+      }
+    },
+    "cartObj_cart": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "5cafefa23e358c6d7669333b"
+        },
+        "items": {
+          "$ref": "#/definitions/cartObj_cart_items"
+        },
+        "totalQty": {
+          "type": "number",
+          "example": 8.0
+        },
+        "totalPrice": {
+          "type": "number",
+          "example": "401.92,"
+        },
+        "userId": {
+          "type": "string",
+          "example": "5ca266b847c6e01609fe6e21"
+        }
+      }
+    },
+    "verifyUser_credential": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "bob@bob.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "Ab123123"
+        }
+      }
+    },
+    "authHeader_user_token": {
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "5c9d2e70bbb680869617ea63"
+        },
+        "token": {
+          "type": "string",
+          "example": "Due6daUTre"
+        }
+      }
+    }
+  }
+}
