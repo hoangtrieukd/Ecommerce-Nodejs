@@ -12,7 +12,7 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "localhost:3000",
+  "host": "localhost:4001",
   "basePath": "/",
   "tags": [
     {
@@ -347,6 +347,20 @@
             "description": "get all products fail"
           }
         }
+      },
+      "post": {
+        "tags": ["products"],
+        "summary": "create product",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "createProduct",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/productObj"
+            }
+          }
+        ]
       }
     },
     "/products/{productID}": {
@@ -662,15 +676,15 @@
         "email": {
           "type": "string",
           "format": "email",
-          "example": "bob@bob.com"
+          "example": "admin@email.com"
         },
         "password": {
           "type": "string",
-          "example": "Ab123123"
+          "example": "123456"
         },
         "verifyPassword": {
           "type": "string",
-          "example": "Ab123123"
+          "example": "123456"
         }
       }
     },
